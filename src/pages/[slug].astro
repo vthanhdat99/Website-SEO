@@ -1,0 +1,65 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+// Hàm getStaticPaths: BẮT BUỘC có trong Astro để tạo ra các URL tĩnh
+export async function getStaticPaths() {
+  // Lấy toàn bộ bài viết từ WordPress
+  const wpUrl = "https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed";
+  const res = await fetch(wpUrl);
+  const posts = await res.json();
+
+  // Trả về danh sách các đường dẫn (slug) và truyền dữ liệu (post) vào từng trang
+  return posts.map((post: any) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+// Nhận dữ liệu của bài viết hiện tại từ props
+const { post } = Astro.props;
+
+// Xóa các thẻ HTML trong excerpt để làm thẻ Meta Description chuẩn SEO
+const cleanDescription = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 160);
+---
+
+<MainLayout title={post.title.rendered} description={cleanDescription}>
+  
+  <section class="bg-[#2C4032] pt-32 pb-16 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <a href="/" class="inline-flex items-center text-[#8B7355] hover:text-[#EFE7D3] transition-colors mb-8 font-medium text-sm tracking-wider uppercase">
+        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Về trang chủ
+      </a>
+
+      <h1 class="text-3xl md:text-5xl font-serif text-[#EFE7D3] leading-tight mb-6" set:html={post.title.rendered} />
+      
+      <div class="text-gray-400 text-sm flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        {new Date(post.date).toLocaleDateString('vi-VN')}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[#F4F1EA] py-16 px-6">
+    <article class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-[#D2C8B8]/30 relative -mt-24">
+      
+      {post._embedded && post._embedded['wp:featuredmedia'] && (
+        <img 
+          src={post._embedded['wp:featuredmedia'][0].source_url} 
+          alt={post.title.rendered}
+          class="w-full h-auto max-h-[400px] object-cover rounded-xl mb-10 shadow-md"
+        />
+      )}
+
+      <div 
+        class="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-[#2C4032] prose-a:text-[#8B7355] hover:prose-a:text-[#527052] prose-img:rounded-xl prose-img:shadow-sm" 
+        set:html={post.content.rendered} 
+      />
+    </article>
+  </section>
+
+</MainLayout>
