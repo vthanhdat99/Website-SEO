@@ -1,17 +1,25 @@
-<a href="https://zalo.me/0343956954" class="zalo-btn">
-  Chat Zalo
-</a>
+---
+const zaloLink = "https://zalo.me/0343956954";
+---
 
-<style>
-.zalo-btn{
- position:fixed;
- bottom:30px;
- left:30px;
- background:#0068ff;
- color:white;
- padding:14px 22px;
- border-radius:40px;
- font-weight:bold;
- box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-</style>
+<a 
+  href={zaloLink} 
+  target="_blank" 
+  class="relative flex items-center h-12 bg-[#0068ff]/70 rounded-full pr-5 pl-12 shadow-lg hover:scale-105 transition-transform duration-300 w-fit ml-4"
+>
+  <div class="absolute -left-4 w-14 h-14 flex items-center justify-center bg-white rounded-full shadow-md z-10">
+    <div class="absolute inset-0 rounded-full border-2 border-[#ffffff] animate-[ping_2s_infinite] opacity-50"></div>
+    
+    <span class="text-white font-black text-xl z-20 tracking-tighter">
+      <img 
+        src="/images/zalo.webp" 
+        alt="Zalo"
+        class="w-8 h-8 object-contain"
+      />
+    </span>
+    
+    <div class="absolute top-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full z-30"></div>
+  </div>
+  
+  <span class="text-white font-bold text-base whitespace-nowrap">Chat Zalo</span>
+</a>
