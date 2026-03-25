@@ -1,0 +1,31 @@
+---
+const { post } = Astro.props;
+---
+
+<a href={`/${post.slug}`} class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-gray-100">
+  <div class="h-48 bg-[#D2C8B8] overflow-hidden relative shrink-0">
+    {post._embedded && post._embedded['wp:featuredmedia'] ? (
+      <img 
+        src={post._embedded['wp:featuredmedia'][0].source_url} 
+        alt={post.title.rendered}
+        loading="lazy"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      />
+    ) : (
+      <div class="w-full h-full bg-[#2C4032]/10 group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+         <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">REXAM</span>
+      </div>
+    )}
+  </div>
+  
+  <div class="p-8 flex flex-col flex-grow">
+    <h3 class="text-xl font-serif text-[#2C4032] mb-3 group-hover:text-[#8B7355] transition-colors line-clamp-2" set:html={post.title.rendered} />
+    <div class="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow" set:html={post.excerpt.rendered} />
+    <div class="flex items-center text-sm font-medium text-[#527052] uppercase tracking-wider mt-auto pt-4 border-t border-gray-100">
+      Chi tiết 
+      <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </div>
+  </div>
+</a>

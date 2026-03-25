@@ -1,11 +1,24 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro"
+import ContactForm from "../components/ContactForm.astro"
+import ServiceCard from "../components/ServiceCard.astro"
+import ProductCard from "../components/ProductCard.astro"
+import ProjectCard from "../components/ProjectCard.astro"
+import { fetchWP } from "../utils/fetchWP";
 
-// XÓA: import { getCollection } from "astro:content"
-// THÊM: Gọi API trực tiếp từ kho WordPress Pantheon của bạn
-const wpUrl = "https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&per_page=6";
-const res = await fetch(wpUrl);
-const posts = await res.json();
+const dichVuID = 3;
+const sanPhamID = 4;
+const duAnID = 7; 
+
+const urlDichVu = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&categories=${dichVuID}&per_page=6`;
+const urlSanPham = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&categories=${sanPhamID}&per_page=6`;
+const urlDuAn = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&categories=${duAnID}&per_page=6`; 
+
+const [postsDichVu, postsSanPham, postsDuAn] = await Promise.all([
+  fetchWP<any[]>(urlDichVu),
+  fetchWP<any[]>(urlSanPham),
+  fetchWP<any[]>(urlDuAn) 
+]);
 ---
 
 <MainLayout
@@ -13,31 +26,25 @@ const posts = await res.json();
   description="Dịch vụ thi công sơn epoxy, sơn chống cháy nhà xưởng tại HCM. Báo giá nhanh chóng."
 >
   <section class="relative min-h-[85vh] flex items-center bg-gray-900 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center bg-no-repeat">
-    
     <div class="absolute inset-0 bg-gradient-to-r from-[#2C4032] via-[#2C4032]/85 to-transparent"></div>
-
     <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
       <div class="max-w-2xl">
         <p class="text-gray-300 text-sm md:text-base uppercase tracking-widest mb-4 font-medium flex items-center gap-2">
-          <span class="w-8 h-[1px] bg-[#8B7355]"></span>
-          Giải Pháp Sơn Công Nghiệp
+          <span class="w-8 h-[1px] bg-[#8B7355]"></span> Giải Pháp Sơn Công Nghiệp
         </p>
-        
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif text-[#EFE7D3] font-normal leading-tight mb-6">
           Thi Công Sơn Epoxy HCM <br/>
         </h1>
-        
         <p class="text-gray-300 text-base md:text-lg mb-10 max-w-xl leading-relaxed">
           Bề Mặt Hoàn Hảo Cho Nhà Xưởng Của Bạn, Chỉ Cách Một Cú Nhấp Chuột: Tìm Sự Bền Bỉ Cho Công Trình Của Bạn Tại Khu Vực Miền Nam.
         </p>
         
         <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-8 mt-8">
-          
           <div class="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
             <a href="#dich-vu" class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 bg-[#527052] hover:bg-[#435c43] text-white text-sm font-medium tracking-wide rounded-full transition-colors duration-300">
               TÌM HIỂU THÊM
             </a>
-            <a href="https://zalo.me/0343956954" class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 bg-[#4B3B2B] hover:bg-[#3a2d21] text-[#EFE7D3] text-sm font-medium tracking-wide rounded-full transition-colors duration-300 border border-[#8B7355]/30 shadow-lg">
+            <a href="#form-tu-van" class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 bg-[#4B3B2B] hover:bg-[#3a2d21] text-[#EFE7D3] text-sm font-medium tracking-wide rounded-full transition-colors duration-300 border border-[#8B7355]/30 shadow-lg">
               NHẬN BÁO GIÁ
             </a>
           </div>
@@ -45,17 +52,32 @@ const posts = await res.json();
           <div class="flex items-center gap-4 pt-2 sm:pt-0">
             <a href="https://www.youtube.com/watch?v=LINK_YOUTUBE_CUA_BAN" target="_blank" class="relative group flex items-center justify-center w-14 h-14 bg-[#8B7355] hover:bg-[#7A6447] rounded-full transition-transform duration-300 hover:scale-105 cursor-pointer shrink-0 shadow-lg border-2 border-[#EFE7D3]/20">
               <span class="absolute inset-0 rounded-full bg-[#8B7355] animate-ping opacity-40 group-hover:opacity-60"></span>
-              
-              <svg class="w-6 h-6 text-[#EFE7D3] ml-1 z-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
+              <svg class="w-6 h-6 text-[#EFE7D3] ml-1 z-10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </a>
-            <span class="text-[#EFE7D3] text-sm font-medium tracking-wide leading-relaxed">
-              Xem Video <br class="hidden sm:block"> Thực Tế
-            </span>
+            <span class="text-[#EFE7D3] text-sm font-medium tracking-wide leading-relaxed">Xem Video <br class="hidden sm:block"> Thực Tế</span>
           </div>
-
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="du-an" class="bg-[#2C4032]/90 py-20 px-6 lg:px-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-[#EFE7D3] mb-4">Dự Án Tiêu Biểu</h2>
+        <div class="w-24 h-1 bg-[#8B7355] mx-auto"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {postsDuAn.map((post: any) => (
+          <ProjectCard post={post} />
+        ))}
+      </div>
+      
+      <div class="text-center mt-12">
+        <a href="#form-tu-van" class="inline-flex items-center gap-2 text-[#EFE7D3] border border-[#8B7355] px-8 py-3 rounded-full hover:bg-[#8B7355] transition-colors duration-300">
+          Đăng ký khảo sát công trình
+        </a>
       </div>
     </div>
   </section>
@@ -68,39 +90,27 @@ const posts = await res.json();
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post: any) => (
-          <a href={`/${post.slug}`} class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-            
-            <div class="h-48 bg-[#D2C8B8] overflow-hidden relative shrink-0">
-              {post._embedded && post._embedded['wp:featuredmedia'] ? (
-                <img 
-                  src={post._embedded['wp:featuredmedia'][0].source_url} 
-                  alt={post.title.rendered}
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div class="w-full h-full bg-[#2C4032]/10 group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
-                   <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">REXAM</span>
-                </div>
-              )}
-            </div>
-            
-            <div class="p-8 flex flex-col flex-grow">
-              <h3 class="text-xl font-serif text-[#2C4032] mb-3 group-hover:text-[#8B7355] transition-colors line-clamp-2" set:html={post.title.rendered} />
-              
-              <div class="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow" set:html={post.excerpt.rendered} />
-              
-              <div class="flex items-center text-sm font-medium text-[#527052] uppercase tracking-wider mt-auto pt-4 border-t border-gray-100">
-                Chi tiết 
-                <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </div>
-            </div>
-          </a>
+        {postsDichVu.map((post: any) => (
+          <ServiceCard post={post} />
         ))}
       </div>
     </div>
   </section>
 
+  <section id="san-pham" class="bg-white py-20 px-6 lg:px-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-[#2C4032] mb-4">Sản Phẩm Của Chúng Tôi</h2>
+        <div class="w-24 h-1 bg-[#8B7355] mx-auto"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {postsSanPham.map((post: any) => (
+          <ProductCard post={post} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ContactForm />
 </MainLayout>

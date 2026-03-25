@@ -1,0 +1,31 @@
+---
+const { post } = Astro.props;
+---
+
+<a href={`/${post.slug}`} class="group block relative overflow-hidden rounded-xl bg-white shadow-sm border border-gray-200 hover:border-[#8B7355] transition-colors duration-300 h-full flex flex-col">
+  
+  <div class="bg-gray-100 overflow-hidden relative shrink-0 h-64">
+    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+    
+    {post._embedded && post._embedded['wp:featuredmedia'] ? (
+      <img 
+        src={post._embedded['wp:featuredmedia'][0].source_url} 
+        alt={post.title.rendered}
+        loading="lazy"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+      />
+    ) : (
+      <div class="w-full h-full bg-[#2C4032]/10 flex items-center justify-center">
+         <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">PRODUCT</span>
+      </div>
+    )}
+  </div>
+  
+  <div class="p-6 text-center flex flex-col flex-grow items-center justify-between z-20 bg-white">
+    <h3 class="text-lg font-serif text-[#2C4032] mb-4 group-hover:text-[#8B7355] transition-colors line-clamp-2" set:html={post.title.rendered} />
+    
+    <span class="inline-block px-5 py-2 border border-[#8B7355] text-[#8B7355] text-xs uppercase tracking-widest font-bold rounded-full group-hover:bg-[#8B7355] group-hover:text-white transition-all duration-300">
+      Xem Sản Phẩm
+    </span>
+  </div>
+</a>

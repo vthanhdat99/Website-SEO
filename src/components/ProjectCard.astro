@@ -1,0 +1,32 @@
+---
+const { post } = Astro.props;
+---
+
+<a href={`/${post.slug}`} class="group relative block overflow-hidden rounded-xl h-64 md:h-80 shadow-md">
+  
+  {post._embedded && post._embedded['wp:featuredmedia'] ? (
+    <img 
+      src={post._embedded['wp:featuredmedia'][0].source_url} 
+      alt={post.title.rendered}
+      loading="lazy"
+      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+    />
+  ) : (
+    <div class="w-full h-full bg-[#2C4032] flex items-center justify-center">
+       <span class="text-white/50 font-serif font-bold tracking-widest">PROJECT</span>
+    </div>
+  )}
+
+  <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+  
+  <div class="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+    <h3 class="text-white font-serif text-xl font-bold mb-2 line-clamp-2" set:html={post.title.rendered} />
+    
+    <span class="text-[#8B7355] font-bold text-sm flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+      Xem chi tiết
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </span>
+  </div>
+</a>

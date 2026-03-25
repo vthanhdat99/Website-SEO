@@ -1,0 +1,72 @@
+---
+import MainLayout from "../layouts/MainLayout.astro"
+
+const categoryId = 6; 
+
+// Fetch bài viết từ WP, lấy 12 bài mới nhất của danh mục này
+const wpUrl = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&categories=${categoryId}&per_page=12`;
+const res = await fetch(wpUrl);
+const posts = await res.json();
+---
+
+<MainLayout
+  title="Kiến thức chuyên ngành | Thi Công Sơn Epoxy HCM"
+  description="Tổng hợp các kiến thức, kinh nghiệm và cẩm nang về thi công sơn epoxy, sơn chống cháy."
+>
+  <section class="bg-[#2C4032] py-20 px-6">
+    <div class="max-w-7xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-serif text-[#EFE7D3] mb-4">Kiến Thức & Cẩm Nang</h1>
+      <div class="w-24 h-1 bg-[#8B7355] mx-auto mb-6"></div>
+      <p class="text-gray-300 max-w-2xl mx-auto text-lg">
+        Chia sẻ kinh nghiệm thực tế, giải pháp thi công và cách bảo dưỡng sàn nhà xưởng bền đẹp theo thời gian.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-[#F4F1EA] py-16 px-6 lg:px-12 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      
+      {posts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post: any) => (
+            <a href={`/${post.slug}`} class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+              
+              <div class="h-48 bg-[#D2C8B8] overflow-hidden relative shrink-0">
+                {post._embedded && post._embedded['wp:featuredmedia'] ? (
+                  <img 
+                    src={post._embedded['wp:featuredmedia'][0].source_url} 
+                    alt={post.title.rendered}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div class="w-full h-full bg-[#2C4032]/10 group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+                     <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">REXAM</span>
+                  </div>
+                )}
+              </div>
+              
+              <div class="p-8 flex flex-col flex-grow">
+                <h3 class="text-xl font-serif text-[#2C4032] mb-3 group-hover:text-[#8B7355] transition-colors line-clamp-2" set:html={post.title.rendered} />
+                
+                <div class="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow" set:html={post.excerpt.rendered} />
+                
+                <div class="flex items-center text-sm font-medium text-[#527052] uppercase tracking-wider mt-auto pt-4 border-t border-gray-100">
+                  Đọc tiếp
+                  <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-20 text-gray-500">
+          <p class="text-xl font-serif">Hiện tại chưa có bài viết nào trong chuyên mục này.</p>
+          <a href="/" class="text-[#527052] font-bold mt-4 inline-block hover:underline">← Quay lại trang chủ</a>
+        </div>
+      )}
+
+    </div>
+  </section>
+</MainLayout>

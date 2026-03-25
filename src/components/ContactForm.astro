@@ -1,0 +1,95 @@
+---
+// Nhập Access Key của bạn vào đây
+const ACCESS_KEY = "88be8cbe-ef22-4606-a7fb-9c2dcbb3207d"; 
+---
+
+<section id="form-tu-van" class="py-16 bg-blue-50">
+  <div class="max-w-xl mx-auto px-4">
+    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+      <h2 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-2">Đăng Ký Tư Vấn</h2>
+      <p class="text-center text-gray-500 mb-6">Để lại thông tin, chúng tôi sẽ gọi lại báo giá ngay cho bạn.</p>
+      
+      <form id="web3form" class="flex flex-col gap-4">
+        
+        <input type="hidden" name="access_key" value={ACCESS_KEY} />
+        
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+        <div>
+          <input type="text" name="name" required placeholder="Họ và tên của bạn" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+        </div>
+        
+        <div>
+          <input type="tel" name="phone" required placeholder="Số điện thoại" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+        </div>
+
+        <div>
+          <textarea name="message" rows="3" placeholder="Bạn cần thi công hạng mục nào? (Ví dụ: Sơn epoxy nhà xưởng 500m2...)" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"></textarea>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full bg-[#1b5e96] text-white font-bold py-3 md:py-4 rounded-lg hover:bg-[#12426a] transition-colors mt-2 text-lg shadow-md flex items-center justify-center gap-2">
+          <span>GỬI THÔNG TIN</span>
+        </button>
+
+        <p id="result" class="text-center font-bold text-sm hidden"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('web3form') as HTMLFormElement;
+  const result = document.getElementById('result');
+  const btn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Đổi trạng thái nút
+    const btnText = btn.querySelector('span');
+    btnText.textContent = 'ĐANG GỬI...';
+    btn.style.opacity = '0.7';
+    result.classList.add('hidden');
+
+    const formData = new FormData(form);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: json
+    })
+    .then(async (response) => {
+      let json = await response.json();
+      result.classList.remove('hidden');
+      if (response.status == 200) {
+        // LỚP BẢO VỆ 2: Báo thành công xanh lá
+        result.textContent = "✅ Tuyệt vời! Chúng tôi đã nhận được thông tin và sẽ gọi lại sớm nhất.";
+        result.className = "text-center font-bold text-sm text-green-600 mt-2";
+        form.reset(); // Xóa trắng form
+      } else {
+        result.textContent = "❌ " + json.message;
+        result.className = "text-center font-bold text-sm text-red-600 mt-2";
+      }
+    })
+    .catch(error => {
+      result.classList.remove('hidden');
+      result.textContent = "❌ Lỗi mạng, vui lòng thử lại sau!";
+      result.className = "text-center font-bold text-sm text-red-600 mt-2";
+    })
+    .finally(() => {
+      // Trả lại trạng thái nút
+      btnText.textContent = 'GỬI THÔNG TIN';
+      btn.style.opacity = '1';
+      
+      // Tự động ẩn thông báo sau 5 giây
+      setTimeout(() => {
+        result.classList.add('hidden');
+      }, 5000);
+    });
+  });
+</script>
