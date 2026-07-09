@@ -61,28 +61,42 @@ const [postsDichVu, postsSanPham, postsDuAn] = await Promise.all([
     </div>
   </section>
 
-  <section id="du-an" class="bg-[#2C4032]/90 py-20 px-6 lg:px-12">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-serif text-[#EFE7D3] mb-4">Dự Án Tiêu Biểu</h2>
-        <div class="w-24 h-1 bg-[#8B7355] mx-auto"></div>
-      </div>
+  <section id="du-an" class="scroll-mt-12 bg-[#2C4032]/90 py-20">
+    
+    <div class="px-6 lg:px-12">
+      <div class="max-w-6xl mx-auto">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {postsDuAn.map((post: any) => (
-          <ProjectCard post={post} />
-        ))}
-      </div>
-      
-      <div class="text-center mt-12">
-        <a href="#form-tu-van" class="inline-flex items-center gap-2 text-[#EFE7D3] border border-[#8B7355] px-8 py-3 rounded-full hover:bg-[#8B7355] transition-colors duration-300">
-          Đăng ký khảo sát công trình
-        </a>
+        <!-- Header -->
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif text-[#EFE7D3] mb-4">
+            Dự Án Tiêu Biểu
+          </h2>
+          <div class="w-24 h-1 bg-[#8B7355] mx-auto"></div>
+        </div>
+
+        <!-- List project -->
+        <div class="flex flex-col gap-10">
+          {postsDuAn.map((post: any) => (
+            <ProjectCard post={post} />
+          ))}
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center mt-16">
+          <a 
+            href="#form-tu-van" 
+            class="inline-flex items-center gap-2 text-[#EFE7D3] border border-[#8B7355] px-10 py-3 rounded-full hover:bg-[#8B7355] transition-all duration-300 hover:scale-105"
+          >
+            Đăng ký khảo sát công trình
+          </a>
+        </div>
+
       </div>
     </div>
+
   </section>
 
-  <section id="dich-vu" class="bg-[#F4F1EA] py-20 px-6 lg:px-12">
+  <section id="dich-vu" class="scroll-mt-12 bg-[#F4F1EA] py-20 px-6 lg:px-12">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-serif text-[#2C4032] mb-4">Các Dịch Vụ Cốt Lõi</h2>
@@ -97,7 +111,7 @@ const [postsDichVu, postsSanPham, postsDuAn] = await Promise.all([
     </div>
   </section>
 
-  <section id="san-pham" class="bg-white py-20 px-6 lg:px-12">
+  <section id="san-pham" class="scroll-mt-12 bg-white py-20 px-6 lg:px-12">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-serif text-[#2C4032] mb-4">Sản Phẩm Của Chúng Tôi</h2>

@@ -1,0 +1,76 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro"
+
+// Fetch danh sách sản phẩm từ Custom Post Type 'san-pham'
+const wpUrl = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/product?_embed&per_page=12`;
+const res = await fetch(wpUrl);
+const products = await res.json();
+---
+
+<MainLayout
+  title="Danh Mục Sản Phẩm Sơn Công Nghiệp | REXAM"
+  description="Chuyên cung cấp các dòng sơn công nghiệp, sơn epoxy, sơn polyurethane và sơn chống cháy chất lượng cao."
+>
+  <section class="bg-[#2C4032] py-20 px-6">
+    <div class="max-w-7xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-serif text-[#EFE7D3] mb-4">Sản Phẩm Sơn Công Nghiệp</h1>
+      <div class="w-24 h-1 bg-[#8B7355] mx-auto mb-6"></div>
+      <p class="text-gray-300 max-w-2xl mx-auto text-lg">
+        Khám phá các dòng sản phẩm sơn epoxy, sơn sàn công nghiệp và sơn chống cháy đạt chuẩn chất lượng từ REXAM.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-[#F4F1EA] py-16 px-6 lg:px-12 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      
+      {products.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {products.map((product: any) => (
+            <a href={`/san-pham/${product.slug}`} class="group block relative overflow-hidden rounded-xl bg-white shadow-sm border border-gray-200 hover:border-[#8B7355] transition-colors duration-300 h-full flex flex-col">
+              
+              <div class="bg-gray-100 overflow-hidden relative shrink-0 h-72">
+                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                
+                {product._embedded && product._embedded['wp:featuredmedia'] ? (
+                  <img 
+                    src={product._embedded['wp:featuredmedia'][0].source_url} 
+                    alt={product.title.rendered}
+                    loading="lazy"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                ) : (
+                  <div class="w-full h-full bg-[#2C4032]/10 flex items-center justify-center">
+                     <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">PRODUCT</span>
+                  </div>
+                )}
+              </div>
+              
+              <div class="p-4 text-center flex flex-col flex-grow items-center justify-between z-20 bg-white">
+                <h3
+                  class="text-base font-serif font-bold text-[#2C4032] mb-1 group-hover:text-[#8B7355] transition-colors line-clamp-2"
+                  set:html={product.title.rendered}
+                />
+                
+                {/* Lấy trường Giá từ ACF nếu có. Giả sử bạn đặt tên field là 'gia_tien' */}
+                {product.acf && product.acf.gia_tien && (
+                  <p class="text-[#8B7355] font-bold mb-2">{product.acf.gia_tien}</p>
+                )}
+                
+                <span class="inline-block px-7 py-1 border border-[#8B7355] text-[#8B7355] text-[11px] uppercase tracking-wide font-semibold rounded-full group-hover:bg-[#8B7355] group-hover:text-white transition-all duration-300 mt-auto">
+                  Xem Sản Phẩm
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-20 text-gray-500">
+          <p class="text-xl font-serif">Hiện tại chưa có sản phẩm nào trong danh mục này.</p>
+          <a href="/" class="text-[#527052] font-bold mt-4 inline-block hover:underline">← Quay lại trang chủ</a>
+        </div>
+      )}
+
+    </div>
+  </section>
+</MainLayout>

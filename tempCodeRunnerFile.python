@@ -1,0 +1,45 @@
+import numpy as np
+import plotly.graph_objects as go
+
+# 1. Thông số của chiếc cốc
+R = 3
+H = 15
+
+# 2. Tạo dữ liệu cho vỏ hình trụ (Chiếc cốc)
+theta = np.linspace(0, 2 * np.pi, 100)
+z_cyl = np.linspace(0, H, 50)
+theta_grid, z_grid = np.meshgrid(theta, z_cyl)
+x_cyl = R * np.cos(theta_grid)
+y_cyl = R * np.sin(theta_grid)
+
+# 3. Tạo dữ liệu cho bề mặt nước (Nằm trên mặt phẳng z = 5y)
+# Nước chỉ giới hạn trong nửa hình tròn đáy (y > 0)
+r_plane = np.linspace(0, R, 50)
+theta_plane = np.linspace(0, np.pi, 50) 
+r_grid, th_grid = np.meshgrid(r_plane, theta_plane)
+x_plane = r_grid * np.cos(th_grid)
+y_plane = r_grid * np.sin(th_grid)
+# Phương trình mặt phẳng nghiêng
+z_plane = 5 * y_plane 
+
+# 4. Vẽ mô hình 3D
+fig = go.Figure()
+
+# Vẽ vỏ cốc (Màu xanh nhạt, hơi trong suốt)
+fig.add_trace(go.Surface(
+    x=x_cyl, y=y_cyl, z=z_grid, 
+    colorscale='Blues', opacity=0.2, showscale=False, name='Vỏ cốc'
+))
+
+# Vẽ mặt nước (Màu xanh đậm hơn, elip nghiêng)
+fig.add_trace(go.Surface(
+    x=x_plane, y=y_plane, z=z_plane, 
+    colorscale='Teal', opacity=0.9, showscale=False, name='Mặt nước'
+))
+
+# Tùy chỉnh giao diện hiển thị
+# Tùy chỉnh giao diện và cố định hệ trục tọa độ
+# Tùy chỉnh giao diện: Ẩn mặt phẳng nền, chỉ hiện 3 trục tọa độ Ox, Oy, Oz
+
+
+fig.show()

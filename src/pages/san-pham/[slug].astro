@@ -1,0 +1,103 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro"
+
+// 1. Tạo các đường dẫn tĩnh cho tất cả sản phẩm
+export async function getStaticPaths() {
+  const wpUrl = "https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/product?_embed&per_page=100";
+  const res = await fetch(wpUrl);
+  const products = await res.json();
+
+  return products.map((product: any) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+
+// 2. Trích xuất hình ảnh
+const imageUrl = product._embedded && product._embedded['wp:featuredmedia'] 
+  ? product._embedded['wp:featuredmedia'][0].source_url 
+  : '';
+
+// 3. Trích xuất dữ liệu từ ACF (đảm bảo tên trường khớp với tên bạn đặt trên WordPress)
+const giaTien = product.acf?.gia_tien || 'Liên hệ';
+const huongDan = product.acf?.huong_dan || '';
+const quyCach = product.acf?.quy_cach || 'Đan';
+---
+
+<MainLayout 
+  title={`${product.title.rendered} | REXAM`} 
+  description={product.excerpt?.rendered?.replace(/(<([^>]+)>)/gi, "") || "Chi tiết sản phẩm"} 
+>
+  <div class="bg-[#F4F1EA] py-12 px-6">
+    <div class="max-w-7xl mx-auto">
+      
+      {/* KHỐI TỔNG QUAN SẢN PHẨM */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-2xl shadow-sm mb-12 border border-gray-100">
+        
+        {/* Cột trái: Hình ảnh */}
+        <div class="relative rounded-xl overflow-hidden bg-white border border-gray-200 h-80 md:h-auto md:min-h-[400px]">
+          <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={product.title.rendered}
+              class="absolute inset-0 w-full h-full object-contain p-2 rounded-lg"
+            />
+          ) : (
+            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-gray-400">
+              Chưa có hình ảnh
+            </div>
+          )}
+        </div>
+
+        {/* Cột phải: Thông tin & ACF */}
+        <div class="flex flex-col justify-center">
+          <nav class="text-sm text-gray-500 mb-4">
+            <a href="/" class="hover:text-[#8B7355]">Trang chủ</a> / 
+            <a href="/san-pham" class="hover:text-[#8B7355]">Sản phẩm</a> / 
+            <span class="text-[#2C4032] font-medium" set:html={product.title.rendered}></span>
+          </nav>
+
+          <h1 class="text-3xl md:text-4xl font-serif font-bold text-[#2C4032] mb-4" set:html={product.title.rendered}></h1>
+          
+          {/* Hiển thị Giá tiền & Quy cách đóng gói từ ACF */}
+          <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100 inline-block">
+             <div class="text-2xl font-bold text-[#8B7355] mb-2">{giaTien}</div>
+             <div class="text-gray-600 text-sm"><strong>Quy cách:</strong> {quyCach}</div>
+          </div>
+          
+          {/* Đoạn tóm tắt (Excerpt) */}
+          {product.excerpt?.rendered && (
+            <div class="prose prose-gray mb-8 text-gray-600 border-l-4 border-[#8B7355] pl-4" set:html={product.excerpt.rendered}></div>
+          )}
+
+          <div class="flex flex-wrap gap-4 mt-auto">
+            <a href="https://zalo.me/0343956954" target="_blank" class="bg-[#2C4032] hover:bg-[#1a261e] text-white px-8 py-3 rounded-full font-bold transition-colors shadow-lg flex items-center gap-2">
+              <span>Nhận báo giá ngay</span>
+            </a>
+            <a href="tel:0343956954" class="bg-white border-2 border-[#2C4032] text-[#2C4032] hover:bg-gray-50 px-8 py-3 rounded-full font-bold transition-colors flex items-center gap-2">
+              <span>Gọi tư vấn</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* KHỐI NỘI DUNG CHI TIẾT */}
+      <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <h2 class="text-2xl font-serif font-bold text-[#2C4032] mb-6 border-b pb-4">Thông Tin Chi Tiết</h2>
+        <div class="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-[#2C4032] prose-a:text-[#8B7355]" set:html={product.content?.rendered}></div>
+      </div>
+
+      {/* KHỐI HƯỚNG DẪN SỬ DỤNG TỪ ACF (Chỉ hiện khi có nhập dữ liệu) */}
+      {huongDan && (
+        <div class="bg-[#2C4032]/5 p-8 md:p-12 rounded-2xl border border-[#2C4032]/10">
+          <h2 class="text-2xl font-serif font-bold text-[#2C4032] mb-6 border-b border-[#2C4032]/20 pb-4">Hướng Dẫn Thi Công / Sử Dụng</h2>
+          <div class="prose prose-lg max-w-none" set:html={huongDan}></div>
+        </div>
+      )}
+
+    </div>
+  </div>
+</MainLayout>
