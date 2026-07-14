@@ -1,31 +1,56 @@
 ---
-const { post } = Astro.props;
+// Nhận vào prop là 'product' thay vì 'post' để đồng bộ với API mới
+const { product } = Astro.props;
+
+// TRÍCH XUẤT DỮ LIỆU AN TOÀN TỪ CUSTOM POST TYPE 'PRODUCT'
+// Dùng optional chaining (?.) kế thừa chính xác từ logic trang chi tiết
+const title = product?.title?.rendered || 'Sản phẩm đang cập nhật';
+const slug = product?.slug || '#';
+const imageUrl = product?._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+
+// Lấy giá tiền từ ACF của CPT Product
+const giaTien = product?.acf?.gia_tien || '';
 ---
 
-<a href={`/${post.slug}`} class="group block relative overflow-hidden rounded-xl bg-white shadow-sm border border-gray-200 hover:border-[#8B7355] transition-colors duration-300 h-full flex flex-col">
+{/* Đường dẫn URL động theo slug của Product */}
+<a href={`/${slug}`} class="group flex flex-col h-full bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500">
   
-  <div class="bg-gray-100 overflow-hidden relative shrink-0 h-64">
-    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+  {/* KHỐI HÌNH ẢNH */}
+  <div class="relative bg-[#F8F9FA] aspect-[4/5] flex items-center justify-center p-8 overflow-hidden shrink-0">
+    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500 z-10"></div>
     
-    {post._embedded && post._embedded['wp:featuredmedia'] ? (
+    {imageUrl ? (
       <img 
-        src={post._embedded['wp:featuredmedia'][0].source_url} 
-        alt={post.title.rendered}
+        src={imageUrl} 
+        alt={title}
         loading="lazy"
-        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+        class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out mix-blend-multiply drop-shadow-md relative z-0"
       />
     ) : (
-      <div class="w-full h-full bg-[#2C4032]/10 flex items-center justify-center">
-         <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">PRODUCT</span>
+      <div class="w-full h-full flex items-center justify-center">
+         <span class="text-gray-300 font-bold text-2xl tracking-widest uppercase">REXAM</span>
       </div>
     )}
   </div>
   
-  <div class="p-6 text-center flex flex-col flex-grow items-center justify-between z-20 bg-white">
-    <h3 class="text-lg font-serif text-[#2C4032] mb-4 group-hover:text-[#8B7355] transition-colors line-clamp-2" set:html={post.title.rendered} />
+  {/* KHỐI NỘI DUNG */}
+  <div class="p-6 flex flex-col flex-grow bg-white z-20">
+    <h3 class="text-lg font-medium text-gray-800 mb-2 group-hover:text-[#00A88F] transition-colors line-clamp-2 leading-snug" set:html={title} />
     
-    <span class="inline-block px-5 py-2 border border-[#8B7355] text-[#8B7355] text-xs uppercase tracking-widest font-bold rounded-full group-hover:bg-[#8B7355] group-hover:text-white transition-all duration-300">
-      Xem Sản Phẩm
-    </span>
+    {/* Hiển thị Giá tiền (Nếu có) */}
+    {giaTien && (
+       <div class="text-[#00A88F] font-semibold text-sm mb-4">{giaTien}</div>
+    )}
+    
+    {/* Nút Xem chi tiết đẩy xuống đáy thẻ */}
+    <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+      <span class="text-[13px] font-bold text-gray-400 uppercase tracking-wider group-hover:text-[#00A88F] transition-colors">
+        Xem chi tiết
+      </span>
+      
+      <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#00A88F] group-hover:text-white transition-all duration-300 group-hover:translate-x-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      </div>
+    </div>
   </div>
 </a>

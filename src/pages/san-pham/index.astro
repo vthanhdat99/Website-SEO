@@ -1,28 +1,38 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro"
 
-// Fetch danh sách sản phẩm từ WP (Lấy tối đa 100 sản phẩm để bộ lọc JS hoạt động tốt nhất)
+// 1. Fetch danh sách sản phẩm từ WP 
 const wpUrl = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/product?_embed&per_page=100`;
 const res = await fetch(wpUrl);
 const products = await res.json();
 
 const safeProducts = Array.isArray(products) ? products : [];
 
-// Trích xuất tất cả các Tag (hoặc danh mục) hiện có từ các sản phẩm để tự động tạo danh sách bộ lọc bên trái
-// Lưu ý: WP API lưu tag IDs trong mảng product.tags. Ở đây làm mẫu 1 list tag cứng để bạn dễ hình dung UI.
-const mockTags = [
-  { id: 'ngoai-that', name: 'Ngoại thất' },
-  { id: 'noi-that', name: 'Nội thất' },
-  { id: 'chong-tham', name: 'Chống thấm' },
-  { id: 'son-lot', name: 'Sơn lót' },
-];
+// 2. TỰ ĐỘNG LẤY DANH SÁCH TAG ĐỂ LÀM BỘ LỌC
+// Quét qua tất cả sản phẩm, tìm các tag (term) đang được dùng và lưu vào một danh sách duy nhất (không trùng lặp)
+const allAvailableTags = new Map();
+
+safeProducts.forEach((product: any) => {
+  if (product._embedded && product._embedded['wp:term']) {
+    // wp:term thường trả về mảng 2 chiều chứa category và tag, ta gộp lại thành 1 mảng (flat)
+    const terms = product._embedded['wp:term'].flat();
+    terms.forEach((term: any) => {
+      // Chỉ lấy những term có dữ liệu hợp lệ
+      if (term && term.slug && term.name) {
+        allAvailableTags.set(term.slug, { id: term.slug, name: term.name });
+      }
+    });
+  }
+});
+
+// Chuyển danh sách từ Map sang Array để dễ dàng in ra HTML
+const sidebarTags = Array.from(allAvailableTags.values());
 ---
 
 <MainLayout
   title="Tìm sản phẩm cho dự án của bạn | REXAM"
   description="Lọc và tìm kiếm các dòng sản phẩm sơn công nghiệp chất lượng cao."
 >
-  {/* Import font Quicksand để có nét chữ tròn mỏng y hệt Dulux */}
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
     .font-quicksand { font-family: 'Quicksand', sans-serif; }
@@ -31,14 +41,13 @@ const mockTags = [
   <div class="bg-white min-h-screen py-10 px-4 md:px-8 lg:px-12 font-quicksand">
     <div class="max-w-[1400px] mx-auto">
       
-      {/* Tiêu đề trang */}
       <h1 class="text-4xl md:text-[2.5rem] font-light text-gray-800 mb-10 tracking-wide">
         Tìm sản phẩm cho dự án của bạn
       </h1>
 
       <div class="flex flex-col lg:flex-row gap-8">
         
-        {/* CỘT TRÁI: BỘ LỌC (SIDEBAR) */}
+        {/* CỘT TRÁI: BỘ LỌC (SIDEBAR) TỰ ĐỘNG */}
         <aside class="w-full lg:w-1/4 flex-shrink-0">
           <div class="sticky top-24">
             <h2 class="text-xl font-medium text-gray-800 mb-6 border-b pb-4">Bộ lọc sản phẩm</h2>
@@ -46,13 +55,13 @@ const mockTags = [
             <div class="space-y-6">
               <div>
                 <h3 class="text-base font-bold text-gray-700 mb-4 flex justify-between items-center cursor-pointer">
-                  Nhu cầu sử dụng
+                  Tính năng / Phân loại
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </h3>
                 
-                {/* Danh sách Checkbox Tags */}
+                {/* Render danh sách Tag động bóc được từ WordPress */}
                 <div class="space-y-3" id="tag-filters">
-                  {mockTags.map(tag => (
+                  {sidebarTags.length > 0 ? sidebarTags.map(tag => (
                     <label class="flex items-center gap-3 group cursor-pointer">
                       <div class="relative flex items-center justify-center w-5 h-5 border border-gray-400 rounded-sm group-hover:border-[#00A88F] transition-colors bg-white">
                         <input type="checkbox" value={tag.id} class="peer sr-only tag-checkbox" />
@@ -62,7 +71,9 @@ const mockTags = [
                       </div>
                       <span class="text-gray-600 text-sm group-hover:text-[#00A88F] transition-colors">{tag.name}</span>
                     </label>
-                  ))}
+                  )) : (
+                    <p class="text-sm text-gray-400 italic">Chưa có thẻ phân loại nào.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -77,27 +88,32 @@ const mockTags = [
               safeProducts.map((product: any) => {
                 const title = product?.title?.rendered || 'Sản phẩm';
                 const imageUrl = product?._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-                
-                // Trích xuất các tính năng nổi bật (Dùng ACF hoặc cắt chuỗi từ excerpt)
-                // Ở đây tôi tạo mock tính năng để giống hệt thiết kế
-                const features = [
-                  "Công nghệ chống bám vết bẩn",
-                  "Lau chùi vượt trội",
-                  "Mặt sơn nhẵn mịn"
-                ];
+                const giaTien = product?.acf?.gia_tien || 'Liên hệ báo giá';
+                const khuyenMai = product?.acf?.khuyen_mai || '';
 
-                // Gán tạm data-tags để test bộ lọc JS (thực tế bạn sẽ lấy id tag từ API)
-                const randomTag = mockTags[Math.floor(Math.random() * mockTags.length)].id;
+                // 3. TÌM TAG CỦA TỪNG SẢN PHẨM ĐỂ LÀM DẤU TÍCH XANH
+                let currentProductTags: string[] = [];
+                let currentProductTagSlugs: string[] = [];
+
+                if (product._embedded && product._embedded['wp:term']) {
+                  const terms = product._embedded['wp:term'].flat();
+                  currentProductTags = terms.map((t: any) => t.name); // Tên tag in ra màn hình
+                  currentProductTagSlugs = terms.map((t: any) => t.slug); // Slug dùng cho JS lọc
+                }
+
+                // Cắt lấy tối đa 4 tag đầu tiên để tránh giao diện bị dài thò lò
+                const features = currentProductTags.slice(0, 4);
+                
+                // Gộp các slug thành chuỗi (vd: "ngoai-that,chong-tham") để bỏ vào data-attribute
+                const dataTags = currentProductTagSlugs.join(',');
 
                 return (
-                  <div class="product-item group flex flex-col h-full bg-white border border-gray-200 hover:shadow-xl transition-shadow duration-300 relative" data-tags={randomTag}>
+                  <div class="product-item group flex flex-col h-full bg-white border border-gray-200 hover:shadow-xl transition-shadow duration-300 relative" data-tags={dataTags}>
                     
-                    {/* Icon Trái tim (Yêu thích) */}
                     <button class="absolute top-4 right-4 z-10 text-gray-300 hover:text-red-500 transition-colors">
                       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </button>
 
-                    {/* Hình ảnh */}
                     <a href={`/san-pham/${product.slug}`} class="block p-6 flex items-center justify-center h-56 bg-white shrink-0">
                       {imageUrl ? (
                         <img src={imageUrl} alt={title} loading="lazy" class="w-full h-full object-contain group-hover:-translate-y-2 transition-transform duration-500" />
@@ -106,38 +122,37 @@ const mockTags = [
                       )}
                     </a>
 
-                    {/* Thông tin */}
                     <a href={`/san-pham/${product.slug}`} class="px-6 flex flex-col flex-grow">
                       <h3 class="text-lg text-gray-800 mb-4 line-clamp-2 leading-snug" set:html={title} />
                       
-                      {/* Danh sách tính năng (Dấu tick xanh) */}
+                      {/* In danh sách dấu tích xanh từ Tag của WordPress */}
                       <ul class="text-[13px] text-gray-600 space-y-2.5 mb-6">
-                        {features.map(feat => (
+                        {features.length > 0 ? features.map((featName) => (
                           <li class="flex items-start gap-2">
                             <svg class="w-4 h-4 text-[#00A88F] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span>{feat}</span>
+                            <span set:html={featName}></span>
                           </li>
-                        ))}
+                        )) : (
+                          <li class="text-gray-400 italic">Đang cập nhật tính năng...</li>
+                        )}
                       </ul>
 
-                      {/* Vị trí cửa hàng */}
-                      <div class="flex items-center gap-2 text-sm text-gray-500 mt-auto pb-6">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        cửa hàng
+                      <div class="mt-auto pb-2">
+                        <span class="text-[#00A88F] font-bold text-lg">{giaTien}</span>
                       </div>
                     </a>
 
-                    {/* Footer Card: Nút So sánh và Mũi tên xanh */}
-                    <div class="border-t border-gray-100 flex items-center justify-between p-4 shrink-0">
-                      <label class="flex items-center gap-3 cursor-pointer group/checkbox">
-                        <div class="relative flex items-center justify-center w-5 h-5 border border-gray-300 rounded-sm bg-white">
-                          <input type="checkbox" class="peer sr-only" />
-                          <svg class="w-3 h-3 text-white peer-checked:text-gray-800 opacity-0 peer-checked:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                          </svg>
-                        </div>
-                        <span class="text-sm text-gray-600 select-none">So sánh</span>
-                      </label>
+                    <div class="border-t border-gray-50 flex items-center justify-between p-4 shrink-0 bg-white z-20">
+                      <div class="flex items-center gap-2 text-[13px] text-gray-500 pr-3 truncate">
+                        {khuyenMai ? (
+                          <>
+                            <svg class="w-4 h-4 text-[#00A88F] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                            <span class="truncate font-medium" set:html={khuyenMai}></span>
+                          </>
+                        ) : (
+                          <span class="italic text-gray-400">Đảm bảo chất lượng 100%</span>
+                        )}
+                      </div>
                       
                       <a href={`/san-pham/${product.slug}`} class="w-10 h-10 bg-gray-50 group-hover:bg-[#00A88F] flex items-center justify-center transition-colors">
                         <svg class="w-5 h-5 text-[#00A88F] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -160,7 +175,7 @@ const mockTags = [
     </div>
   </div>
 
-  {/* SCRIPT XỬ LÝ LỌC SẢN PHẨM Ở CLIENT-SIDE (Cực nhanh, không cần load lại trang) */}
+  {/* SCRIPT LỌC JAVASCRIPT */}
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
       const checkboxes = document.querySelectorAll('.tag-checkbox');
@@ -173,17 +188,16 @@ const mockTags = [
                                    .filter(i => i.checked)
                                    .map(i => i.value);
           
-          // Lặp qua danh sách sản phẩm để ẩn/hiện
           products.forEach(product => {
-            const productTags = product.dataset.tags || '';
+            // Lấy chuỗi tags của sản phẩm, chuyển thành mảng
+            const productTagsString = product.dataset.tags || '';
+            const productTagsArray = productTagsString.split(',');
             
-            // Nếu không có tag nào được chọn, hiện tất cả
             if (selectedTags.length === 0) {
               product.style.display = 'flex';
-            } 
-            // Nếu có chọn tag, kiểm tra xem sản phẩm có chứa tag đó không
-            else {
-              const hasTag = selectedTags.some(tag => productTags.includes(tag));
+            } else {
+              // Lọc OR: Sản phẩm hiển thị nếu chứa ÍT NHẤT 1 tag trong số các tag đang chọn
+              const hasTag = selectedTags.some(tag => productTagsArray.includes(tag));
               product.style.display = hasTag ? 'flex' : 'none';
             }
           });

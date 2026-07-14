@@ -3,40 +3,42 @@
 const ACCESS_KEY = "88be8cbe-ef22-4606-a7fb-9c2dcbb3207d"; 
 ---
 
-<section id="form-tu-van" class="py-16 bg-blue-50">
-  <div class="max-w-xl mx-auto px-4">
-    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-      <h2 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-2">Đăng Ký Tư Vấn</h2>
-      <p class="text-center text-gray-500 mb-6">Để lại thông tin, chúng tôi sẽ gọi lại báo giá ngay cho bạn.</p>
+<section id="form-tu-van" class="py-20 lg:py-28 bg-[#F8F9FA]">
+  <div class="max-w-3xl mx-auto px-4 md:px-8">
+    <div class="bg-white p-8 md:p-12 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
       
-      <form id="web3form" class="flex flex-col gap-4">
+      <div class="text-center mb-10">
+        <h2 class="text-xs font-bold text-[#00A88F] uppercase tracking-widest mb-3">Liên Hệ Rexam</h2>
+        <h3 class="text-3xl md:text-[2.5rem] font-light text-gray-800 tracking-wide mb-4">Đăng Ký Tư Vấn</h3>
+        <p class="text-gray-500 font-light">Để lại thông tin, chuyên gia của chúng tôi sẽ liên hệ khảo sát và báo giá ngay cho bạn.</p>
+      </div>
+      
+      <form id="web3form" class="flex flex-col gap-5">
         
         <input type="hidden" name="access_key" value={ACCESS_KEY} />
-        
         <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
 
-        <div>
-          <input type="text" name="name" required placeholder="Họ và tên của bạn" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
-        </div>
-        
-        <div>
-          <input type="tel" name="phone" required placeholder="Số điện thoại" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <input type="text" name="name" required placeholder="Họ và tên của bạn" class="w-full px-5 py-4 rounded-xl bg-[#F8F9FA] border-transparent focus:bg-white border focus:border-[#00A88F] focus:ring-4 focus:ring-[#00A88F]/10 transition-all font-light outline-none" />
+          
+          <input type="tel" name="phone" required placeholder="Số điện thoại" class="w-full px-5 py-4 rounded-xl bg-[#F8F9FA] border-transparent focus:bg-white border focus:border-[#00A88F] focus:ring-4 focus:ring-[#00A88F]/10 transition-all font-light outline-none" />
         </div>
 
         <div>
-          <textarea name="message" rows="3" placeholder="Bạn cần thi công hạng mục nào? (Ví dụ: Sơn epoxy nhà xưởng 500m2...)" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"></textarea>
+          <textarea name="message" rows="4" placeholder="Bạn cần thi công hạng mục nào? (Ví dụ: Sơn epoxy nhà xưởng 500m2...)" class="w-full px-5 py-4 rounded-xl bg-[#F8F9FA] border-transparent focus:bg-white border focus:border-[#00A88F] focus:ring-4 focus:ring-[#00A88F]/10 transition-all font-light outline-none resize-none"></textarea>
         </div>
 
-        <button type="submit" id="submit-btn" class="w-full bg-[#1b5e96] text-white font-bold py-3 md:py-4 rounded-lg hover:bg-[#12426a] transition-colors mt-2 text-lg shadow-md flex items-center justify-center gap-2">
-          <span>GỬI THÔNG TIN</span>
+        <button type="submit" id="submit-btn" class="w-full bg-[#00A88F] text-white font-bold tracking-wider uppercase py-4 rounded-xl hover:bg-[#008f7a] transition-all shadow-md hover:shadow-lg mt-4 flex items-center justify-center gap-2">
+          <span>GỬI YÊU CẦU</span>
         </button>
 
-        <p id="result" class="text-center font-bold text-sm hidden"></p>
+        <p id="result" class="text-center font-medium text-sm hidden mt-2"></p>
       </form>
     </div>
   </div>
 </section>
 
+{/* Phần <script> giữ nguyên y hệt của bạn, không cần thay đổi */}
 <script>
   const form = document.getElementById('web3form') as HTMLFormElement;
   const result = document.getElementById('result');
@@ -44,8 +46,6 @@ const ACCESS_KEY = "88be8cbe-ef22-4606-a7fb-9c2dcbb3207d";
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    // Đổi trạng thái nút
     const btnText = btn.querySelector('span');
     btnText.textContent = 'ĐANG GỬI...';
     btn.style.opacity = '0.7';
@@ -67,26 +67,22 @@ const ACCESS_KEY = "88be8cbe-ef22-4606-a7fb-9c2dcbb3207d";
       let json = await response.json();
       result.classList.remove('hidden');
       if (response.status == 200) {
-        // LỚP BẢO VỆ 2: Báo thành công xanh lá
         result.textContent = "✅ Tuyệt vời! Chúng tôi đã nhận được thông tin và sẽ gọi lại sớm nhất.";
-        result.className = "text-center font-bold text-sm text-green-600 mt-2";
-        form.reset(); // Xóa trắng form
+        result.className = "text-center font-medium text-sm text-[#00A88F] mt-2";
+        form.reset();
       } else {
         result.textContent = "❌ " + json.message;
-        result.className = "text-center font-bold text-sm text-red-600 mt-2";
+        result.className = "text-center font-medium text-sm text-red-500 mt-2";
       }
     })
     .catch(error => {
       result.classList.remove('hidden');
       result.textContent = "❌ Lỗi mạng, vui lòng thử lại sau!";
-      result.className = "text-center font-bold text-sm text-red-600 mt-2";
+      result.className = "text-center font-medium text-sm text-red-500 mt-2";
     })
     .finally(() => {
-      // Trả lại trạng thái nút
-      btnText.textContent = 'GỬI THÔNG TIN';
+      btnText.textContent = 'GỬI YÊU CẦU';
       btn.style.opacity = '1';
-      
-      // Tự động ẩn thông báo sau 5 giây
       setTimeout(() => {
         result.classList.add('hidden');
       }, 5000);

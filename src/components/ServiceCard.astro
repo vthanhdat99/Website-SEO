@@ -1,28 +1,40 @@
 ---
 const { post } = Astro.props;
+
+// Bóc tách an toàn
+const title = post?.title?.rendered || 'Đang cập nhật';
+const slug = post?.slug || '#';
+const excerpt = post?.excerpt?.rendered || '';
+const imageUrl = post?._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
 ---
 
-<a href={`/${post.slug}`} class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-gray-100">
-  <div class="h-48 bg-[#D2C8B8] overflow-hidden relative shrink-0">
-    {post._embedded && post._embedded['wp:featuredmedia'] ? (
+<a href={`/${slug}`} class="group flex flex-col h-full bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-500">
+  
+  {/* Khối ảnh */}
+  <div class="h-56 bg-[#F8F9FA] overflow-hidden relative shrink-0">
+    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-10"></div>
+    {imageUrl ? (
       <img 
-        src={post._embedded['wp:featuredmedia'][0].source_url} 
-        alt={post.title.rendered}
+        src={imageUrl} 
+        alt={title}
         loading="lazy"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
       />
     ) : (
-      <div class="w-full h-full bg-[#2C4032]/10 group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
-         <span class="text-[#2C4032]/40 font-serif font-bold text-xl tracking-widest">REXAM</span>
+      <div class="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+         <span class="text-gray-200 font-bold text-2xl tracking-widest uppercase">SERVICE</span>
       </div>
     )}
   </div>
   
+  {/* Khối nội dung */}
   <div class="p-8 flex flex-col flex-grow">
-    <h3 class="text-xl font-serif text-[#2C4032] mb-3 group-hover:text-[#8B7355] transition-colors line-clamp-2" set:html={post.title.rendered} />
-    <div class="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow" set:html={post.excerpt.rendered} />
-    <div class="flex items-center text-sm font-medium text-[#527052] uppercase tracking-wider mt-auto pt-4 border-t border-gray-100">
-      Chi tiết 
+    <h3 class="text-xl font-medium text-gray-900 mb-4 group-hover:text-[#00A88F] transition-colors leading-snug line-clamp-2" set:html={title} />
+    
+    <div class="text-gray-500 font-light text-sm leading-relaxed line-clamp-3 mb-6 flex-grow" set:html={excerpt} />
+    
+    <div class="flex items-center text-xs font-bold text-[#00A88F] uppercase tracking-widest mt-auto pt-6 border-t border-gray-50">
+      Chi tiết dịch vụ 
       <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
       </svg>

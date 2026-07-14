@@ -4,9 +4,13 @@ import MainLayout from '../layouts/MainLayout.astro';
 // Hàm getStaticPaths: BẮT BUỘC có trong Astro để tạo ra các URL tĩnh
 export async function getStaticPaths() {
   // Lấy toàn bộ bài viết từ WordPress
-  const wpUrl = "https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed";
+  const wpUrl = "https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&per_page=100";
   const res = await fetch(wpUrl);
   const posts = await res.json();
+
+  if (!Array.isArray(posts)) {
+    return [];
+  }
 
   // Trả về danh sách các đường dẫn (slug) và truyền dữ liệu (post) vào từng trang
   return posts.map((post: any) => ({
@@ -18,47 +22,63 @@ export async function getStaticPaths() {
 // Nhận dữ liệu của bài viết hiện tại từ props
 const { post } = Astro.props;
 
+// TRÍCH XUẤT DỮ LIỆU AN TOÀN (Bảo vệ web khỏi lỗi crash)
+const title = post?.title?.rendered || 'Đang cập nhật';
+const content = post?.content?.rendered || '';
+const excerpt = post?.excerpt?.rendered || '';
+const imageUrl = post?._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+const date = post?.date ? new Date(post.date).toLocaleDateString('vi-VN') : '';
+
 // Xóa các thẻ HTML trong excerpt để làm thẻ Meta Description chuẩn SEO
-const cleanDescription = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 160);
+const cleanDescription = excerpt.replace(/<[^>]*>?/gm, '').substring(0, 160) || "Chi tiết bài viết REXAM";
 ---
 
-<MainLayout title={post.title.rendered} description={cleanDescription}>
+<MainLayout title={`${title} | REXAM`} description={cleanDescription}>
   
-  <section class="bg-[#2C4032] pt-32 pb-16 px-6">
-    <div class="max-w-4xl mx-auto text-center">
-      <a href="/" class="inline-flex items-center text-[#8B7355] hover:text-[#EFE7D3] transition-colors mb-8 font-medium text-sm tracking-wider uppercase">
-        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Về trang chủ
-      </a>
-
-      <h1 class="text-3xl md:text-5xl font-serif text-[#EFE7D3] leading-tight mb-6" set:html={post.title.rendered} />
+  {/* ================= HEADER BÀI VIẾT (Sang trọng, nền xám nhạt) ================= */}
+  <section class="bg-[#F8F9FA] py-16 md:py-12 px-6 border-b border-gray-100">
+    <div class="max-w-3xl mx-auto text-center">
       
-      <div class="text-gray-400 text-sm flex items-center justify-center gap-2">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        {new Date(post.date).toLocaleDateString('vi-VN')}
-      </div>
+      {/* Nút quay lại */}
+      <a href="/kien-thuc" class="inline-flex items-center gap-2 text-[#00A88F] text-xs font-bold uppercase tracking-widest mb-8 hover:text-[#008f7a] transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Về danh sách
+      </a>
+      
+      {/* Tiêu đề */}
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 leading-tight mb-6 tracking-wide" set:html={title}></h1>
+      
+      {/* Ngày đăng */}
+      {date && (
+        <div class="flex items-center justify-center gap-2 text-gray-400 text-sm font-light uppercase tracking-wider">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          {date}
+        </div>
+      )}
+      
     </div>
   </section>
 
-  <section class="bg-[#F4F1EA] py-16 px-6">
-    <article class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-[#D2C8B8]/30 relative -mt-24">
+  {/* ================= NỘI DUNG BÀI VIẾT ================= */}
+  <section class="bg-white py-12 md:py-20 px-6">
+    <article class="max-w-3xl mx-auto">
       
-      {post._embedded && post._embedded['wp:featuredmedia'] && (
-        <img 
-          src={post._embedded['wp:featuredmedia'][0].source_url} 
-          alt={post.title.rendered}
-          class="w-full h-auto max-h-[400px] object-cover rounded-xl mb-10 shadow-md"
-        />
+      {/* Ảnh đại diện bài viết */}
+      {imageUrl && (
+        <div class="mb-12 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            class="w-full h-auto max-h-[500px] object-cover hover:scale-105 transition-transform duration-700 ease-out" 
+          />
+        </div>
       )}
 
-      <div 
-        class="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-[#2C4032] prose-a:text-[#8B7355] hover:prose-a:text-[#527052] prose-img:rounded-xl prose-img:shadow-sm" 
-        set:html={post.content.rendered} 
-      />
+      {/* Quan trọng: Khối div này phải mang class "dulux-content" 
+        để tự động nhận CSS Global mà chúng ta đã setup ở MainLayout 
+      */}
+      <div class="dulux-content" set:html={content}></div>
+
     </article>
   </section>
 

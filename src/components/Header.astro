@@ -1,10 +1,10 @@
 ---
-// Không cần thẻ style nữa vì đã dùng Tailwind
 ---
 
 <header class="w-full sticky top-0 z-50">
-  <div class="bg-[#2C4032] text-[#EFE7D3] py-2 px-6 text-sm hidden md:block">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
+  {/* Top bar màu xám đậm chuyên nghiệp */}
+  <div class="bg-gray-900 text-gray-300 py-2 px-6 text-xs font-light hidden md:block">
+    <div class="max-w-[1300px] mx-auto flex justify-between items-center">
       <div class="flex items-center gap-6">
         <a href="https://zalo.me/0343956954" class="hover:text-white transition-colors flex items-center gap-2">
           📞 Hotline/Zalo: 034 395 6954
@@ -14,33 +14,34 @@
         </span>
       </div>
       <div>
-        <span class="opacity-80">Chuyên nghiệp - Tận tâm - Bền bỉ</span>
+        <span class="opacity-80 uppercase tracking-widest">Chuyên nghiệp - Tận tâm - Bền bỉ</span>
       </div>
     </div>
   </div>
 
-  <div class="bg-[#F4F1EA]/20 backdrop-blur-md border-b border-[#D2C8B8] shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+  {/* Main Nav trong suốt nền trắng */}
+  <div class="bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <div class="max-w-[1300px] mx-auto px-6 py-4 flex justify-between items-center">
       
-      <a href="/" class="text-3xl font-serif font-bold text-[#2C4032] tracking-wider">
-        REXAM<span class="text-[#8B7355]">.</span>
+      <a href="/" class="text-3xl font-bold text-gray-900 tracking-widest">
+        REXAM<span class="text-[#00A88F]">.</span>
       </a>
 
-      <nav class="hidden md:flex gap-8 text-[#2C4032] font-medium text-sm tracking-wide uppercase items-center">
-        <a href="/" class="hover:text-[#8B7355] transition-colors duration-300">Trang chủ</a>
-        <a href="/gioi-thieu" class="hover:text-[#8B7355] transition-colors duration-300">Giới thiệu</a>
-        <a href="/san-pham" class="hover:text-[#8B7355] transition-colors duration-300">Sản phẩm</a>
-        <a href="/#dich-vu" class="hover:text-[#8B7355] transition-colors duration-300">Dịch vụ</a>
-        <a href="/#du-an" class="hover:text-[#8B7355] transition-colors duration-300">Dự án</a>
-        <a href="/kien-thuc" class="hover:text-[#8B7355] transition-colors duration-300">Kiến thức</a>
-        <a href="https://zalo.me/0343956954" class="bg-[#4B3B2B] hover:bg-[#3a2d21] text-[#EFE7D3] px-6 py-2.5 rounded-full transition-colors duration-300">
-          Liên hệ ngay
+      <nav class="hidden md:flex gap-8 text-gray-600 font-bold text-xs tracking-widest uppercase items-center">
+        <a href="/" class="hover:text-[#00A88F] transition-colors duration-300">Trang chủ</a>
+        <a href="/gioi-thieu" class="hover:text-[#00A88F] transition-colors duration-300">Giới thiệu</a>
+        <a href="/san-pham" class="hover:text-[#00A88F] transition-colors duration-300">Sản phẩm</a>
+        <a href="/#dich-vu" class="hover:text-[#00A88F] transition-colors duration-300">Dịch vụ</a>
+        <a href="/#du-an" class="hover:text-[#00A88F] transition-colors duration-300">Dự án</a>
+        <a href="/kien-thuc" class="hover:text-[#00A88F] transition-colors duration-300">Kiến thức</a>
+        <a href="https://zalo.me/0343956954" class="bg-[#00A88F] hover:bg-[#008f7a] text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:-translate-y-0.5">
+          Nhận báo giá
         </a>
       </nav>
 
-      <button class="md:hidden text-[#2C4032]">
+      <button class="md:hidden text-gray-900">
         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
 
