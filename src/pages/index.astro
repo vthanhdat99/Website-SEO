@@ -6,11 +6,9 @@ import ProductCard from "../components/ProductCard.astro"
 import ProjectCard from "../components/ProjectCard.astro"
 import { fetchWP } from "../utils/fetchWP";
 
-// Vẫn giữ Category ID cho Dịch vụ và Dự án
 const dichVuID = 3;
 const duAnID = 7; 
 
-// CHỈNH LẠI LOGIC API: 
 const urlSanPham = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/product?_embed&per_page=8`;
 const urlDichVu = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&categories=${dichVuID}&per_page=3`;
 const urlDuAn = `https://dev-rexam-backend.pantheonsite.io/wp-json/wp/v2/posts?_embed&categories=${duAnID}&per_page=3`; 
@@ -27,83 +25,93 @@ const [postsDichVu, products, postsDuAn] = await Promise.all([
   description="Dịch vụ thi công sơn epoxy, sơn chống cháy nhà xưởng tại HCM. Cung cấp sản phẩm chất lượng cao."
 >
   {/* ================= HERO BANNER ================= */}
-  <section class="relative min-h-[85vh] flex items-center bg-gray-900 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center bg-no-repeat">
-    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-transparent"></div>
+  <section class="relative min-h-[85vh] flex items-center bg-gray-900 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center bg-no-repeat overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
     
-    <div class="relative z-10 max-w-[1300px] mx-auto px-6 lg:px-12 w-full">
-      {/* Khối Hero trượt nhẹ lên ngay khi tải trang */}
-      <div class="max-w-2xl transform translate-y-8 opacity-0 transition-all duration-1000 ease-out" id="hero-content">
-        <p class="text-[#00A88F] text-xs md:text-sm uppercase tracking-[0.2em] mb-6 font-bold flex items-center gap-3">
-          <span class="w-10 h-[2px] bg-[#00A88F]"></span> Giải Pháp Sơn Công Nghiệp
+    <div class="relative z-10 max-w-[1440px] mx-auto px-4 md:px-6 lg:px-8 w-full">
+      <div class="max-w-3xl transform translate-y-8 opacity-0 transition-all duration-1000 ease-out" id="hero-content">
+        
+        <p class="text-[#00A88F] text-[11px] uppercase tracking-[0.3em] mb-8 font-bold flex items-center gap-4">
+          <span class="w-12 h-[1px] bg-[#00A88F]"></span> GIẢI PHÁP SƠN CÔNG NGHIỆP
         </p>
-        <h1 class="text-4xl md:text-5xl lg:text-[4rem] text-white font-light leading-[1.1] mb-6 tracking-wide">
-          Bề Mặt Hoàn Hảo <br/> Cho Nhà Xưởng
+        
+        <h1 class="text-4xl md:text-5xl lg:text-[4.5rem] text-white font-light leading-[1.05] mb-6 tracking-wide">
+          Bề Mặt Hoàn Hảo <br class="hidden sm:block"/> Cho Nhà Xưởng.
         </h1>
-        <p class="text-gray-300 text-base md:text-lg mb-10 max-w-xl leading-relaxed font-light">
+        
+        <p class="text-gray-400 text-sm md:text-base mb-12 max-w-xl leading-relaxed font-light">
           Tìm kiếm sự bền bỉ cho công trình của bạn với các giải pháp sơn Epoxy và sơn công nghiệp hàng đầu tại Việt Nam.
         </p>
         
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 mt-8">
-          <a href="#san-pham" class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 bg-[#00A88F] hover:bg-[#008f7a] text-white text-sm font-bold tracking-wider rounded-full transition-all duration-300 shadow-[0_4px_15px_rgba(0,168,143,0.3)] hover:-translate-y-0.5">
-            KHÁM PHÁ SẢN PHẨM
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <a href="#du-an" class="w-full sm:w-auto inline-flex justify-center items-center px-10 py-4 bg-[#00A88F] hover:bg-white hover:text-gray-900 text-white text-[13px] font-bold tracking-[0.15em] transition-all duration-300">
+            XEM DỰ ÁN
           </a>
-          <a href="#form-tu-van" class="w-full sm:w-auto inline-flex justify-center items-center px-8 py-3.5 bg-transparent border border-white/30 hover:bg-white hover:text-gray-900 text-white text-sm font-bold tracking-wider rounded-full transition-all duration-300">
+          
+          <a href="#form-tu-van" class="group w-full sm:w-auto inline-flex justify-center items-center px-10 py-4 bg-transparent border border-white/30 hover:bg-white hover:text-gray-900 text-white text-[13px] font-bold tracking-[0.15em] transition-all duration-300">
             NHẬN BÁO GIÁ
           </a>
+
+          <div class="flex items-center gap-4 pt-4 sm:pt-0 sm:ml-4">
+            <a href="https://www.youtube.com/watch?v=LINK_YOUTUBE_CUA_BAN" target="_blank" class="relative flex items-center justify-center w-12 h-12 bg-white/10 hover:bg-[#00A88F] border border-white/20 transition-all duration-300 group">
+              <span class="absolute inset-0 bg-[#00A88F] animate-ping opacity-0 group-hover:opacity-40"></span>
+              <svg class="w-4 h-4 text-white ml-0.5 z-10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </a>
+            <span class="text-white text-[10px] font-bold tracking-[0.15em] uppercase leading-relaxed opacity-80 border-l border-white/20 pl-4">Xem Video <br> Thực Tế</span>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
 
-  {/* ================= SECTION SẢN PHẨM NỔI BẬT ================= */}
-  <section id="san-pham" class="scroll-mt-12 bg-white py-20 lg:py-28 px-4 md:px-8 lg:px-12 overflow-hidden">
-    <div class="max-w-[1300px] mx-auto">
+  {/* ================= SECTION SẢN PHẨM (Nền trắng) ================= */}
+  <section id="san-pham" class="scroll-mt-12 bg-white py-20 lg:py-28 px-4 md:px-6 lg:px-8 overflow-hidden">
+    <div class="max-w-[1440px] mx-auto">
       
-      {/* Tiêu đề section: Sẽ xuất hiện trước */}
-      <div class="text-center mb-12 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
-        <h2 class="text-xs font-bold text-[#00A88F] uppercase tracking-widest mb-3">REXAM Collection</h2>
-        <h3 class="text-3xl md:text-[2.5rem] font-light text-gray-800 tracking-wide mb-6">Sản Phẩm Tiêu Biểu</h3>
-        
-        <a href="/san-pham" class="inline-block border border-gray-200 text-gray-600 hover:text-[#00A88F] hover:border-[#00A88F] px-8 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300">
-          Xem toàn bộ danh mục
-        </a>
+      <div class="text-center mb-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
+        <h2 class="text-[11px] font-bold text-[#00A88F] uppercase tracking-[0.2em] mb-3">REXAM Collection</h2>
+        <h3 class="text-3xl md:text-4xl font-light text-gray-900 tracking-wide">Sản Phẩm Tiêu Biểu.</h3>
       </div>
 
-      {/* Grid sản phẩm: Mỗi thẻ con sẽ tự động trượt lên so le nhau nhờ toán tử index */}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         {Array.isArray(products) && products.map((product: any, index: number) => {
-          // Tạo hiệu ứng trễ (stagger delay) cho 4 cột
           const delays = ["delay-[0ms]", "delay-[100ms]", "delay-[200ms]", "delay-[300ms]"];
           const delayClass = delays[index % 4];
 
           return (
-            <div class={`reveal opacity-0 translate-y-16 transition-all duration-1000 ease-out ${delayClass}`}>
+            <div class={`reveal opacity-0 translate-y-12 transition-all duration-[800ms] ease-out ${delayClass}`}>
               <ProductCard product={product} />
             </div>
           );
         })}
       </div>
       
-    </div>
-  </section>
-
-  {/* ================= SECTION DỊCH VỤ ================= */}
-  <section id="dich-vu" class="scroll-mt-12 bg-[#F8F9FA] py-20 lg:py-28 px-4 md:px-8 lg:px-12 overflow-hidden">
-    <div class="max-w-[1300px] mx-auto">
-      
-      <div class="text-center mb-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
-        <h2 class="text-xs font-bold text-[#00A88F] uppercase tracking-widest mb-3">Chuyên Môn Của Rexam</h2>
-        <h3 class="text-3xl md:text-[2.5rem] font-light text-gray-800 tracking-wide">Dịch Vụ Cốt Lõi</h3>
+      <div class="flex justify-center mt-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
+        <a href="/san-pham" class="group flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.15em] text-gray-900 hover:text-[#00A88F] transition-colors border border-gray-200 hover:border-[#00A88F] px-10 py-4">
+          Xem toàn bộ danh mục 
+          <span class="w-8 h-[1px] bg-gray-900 group-hover:bg-[#00A88F] transition-colors group-hover:translate-x-2 duration-300"></span>
+        </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    </div>
+  </section>
+  {/* ================= SECTION DỊCH VỤ (Nền xám nhạt) ================= */}
+  <section id="dich-vu" class="scroll-mt-12 bg-[#F8F9FA] py-20 lg:py-28 px-4 md:px-6 lg:px-8 overflow-hidden border-y border-gray-100">
+    <div class="max-w-[1440px] mx-auto">
+      
+      <div class="text-center mb-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
+        <h2 class="text-[11px] font-bold text-[#00A88F] uppercase tracking-[0.2em] mb-3">Chuyên Môn Của Rexam</h2>
+        <h3 class="text-3xl md:text-4xl font-light text-gray-900 tracking-wide">Dịch Vụ Cốt Lõi.</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {Array.isArray(postsDichVu) && postsDichVu.map((post: any, index: number) => {
-          // Tạo hiệu ứng trễ so le cho 3 cột dịch vụ
           const delays = ["delay-[0ms]", "delay-[150ms]", "delay-[300ms]"];
           const delayClass = delays[index % 3];
 
           return (
-            <div class={`reveal opacity-0 translate-y-16 transition-all duration-1000 ease-out ${delayClass}`}>
+            <div class={`reveal opacity-0 translate-y-12 transition-all duration-[800ms] ease-out ${delayClass}`}>
               <ServiceCard post={post} />
             </div>
           );
@@ -113,35 +121,40 @@ const [postsDichVu, products, postsDuAn] = await Promise.all([
     </div>
   </section>
 
-  {/* ================= SECTION DỰ ÁN ================= */}
-  <section id="du-an" class="scroll-mt-12 bg-white py-20 lg:py-28 px-4 md:px-8 lg:px-12 overflow-hidden">
-    <div class="max-w-[1300px] mx-auto">
+
+  {/* ================= SECTION DỰ ÁN (Nền trắng) ================= */}
+  <section id="du-an" class="relative scroll-mt-12 bg-white py-20 lg:py-28 px-4 md:px-6 lg:px-8 overflow-hidden">
+    <div class="absolute top-10 left-0 text-[10rem] md:text-[15rem] font-black text-gray-50 leading-none select-none -z-10 tracking-tighter">
+      WORKS.
+    </div>
+
+    <div class="max-w-[1440px] mx-auto relative z-10">
 
       <div class="text-center mb-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
-        <h2 class="text-xs font-bold text-[#00A88F] uppercase tracking-widest mb-3">Công trình thực tế</h2>
-        <h3 class="text-3xl md:text-[2.5rem] font-light text-gray-800 tracking-wide">Dự Án Tiêu Biểu</h3>
+        <h2 class="text-[11px] font-bold text-[#00A88F] uppercase tracking-[0.2em] mb-3">Công Trình Thực Tế</h2>
+        <h3 class="text-3xl md:text-4xl font-light text-gray-900 tracking-wide">Dự Án Tiêu Biểu.</h3>
       </div>
 
-      {/* Các ProjectCard dọc sẽ trượt lên tuần tự */}
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {Array.isArray(postsDuAn) && postsDuAn.map((post: any, index: number) => {
           const delays = ["delay-[0ms]", "delay-[150ms]", "delay-[300ms]"];
           const delayClass = delays[index % 3];
 
           return (
-            <div class={`reveal opacity-0 translate-y-16 transition-all duration-1000 ease-out ${delayClass}`}>
+            <div class={`reveal opacity-0 translate-y-12 transition-all duration-[800ms] ease-out ${delayClass}`}>
               <ProjectCard post={post} />
             </div>
           );
         })}
       </div>
 
-      <div class="text-center mt-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
+      <div class="flex justify-center mt-16 reveal opacity-0 translate-y-10 transition-all duration-700 ease-out">
         <a 
           href="#form-tu-van" 
-          class="inline-flex items-center gap-2 bg-[#00A88F] text-white px-10 py-3.5 rounded-full font-bold uppercase tracking-wider hover:bg-[#008f7a] shadow-lg transition-all duration-300 hover:-translate-y-1"
+          class="inline-flex items-center gap-3 bg-gray-900 text-white px-10 py-4 font-bold text-[13px] uppercase tracking-[0.15em] hover:bg-[#00A88F] transition-colors duration-500"
         >
-          Đăng ký khảo sát công trình
+          Đăng ký khảo sát
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
         </a>
       </div>
 
@@ -149,44 +162,40 @@ const [postsDichVu, products, postsDuAn] = await Promise.all([
   </section>
 
   {/* ================= FORM LIÊN HỆ ================= */}
-  {/* Thêm hiệu ứng xuất hiện cho form liên hệ */}
-  <div class="reveal opacity-0 translate-y-16 transition-all duration-1000 ease-out">
+  <div class="reveal opacity-0 translate-y-12 transition-all duration-[800ms] ease-out">
     <ContactForm />
   </div>
 </MainLayout>
 
-{/* ================= HỆ THỐNG ENGINE HOẠT HỌA (SCRIPTS) ================= */}
+{/* ================= HỆ THỐNG ENGINE HOẠT HỌA ================= */}
 <script is:inline>
-  // Kích hoạt ngay hiệu ứng mượt mà cho Hero Section khi tải trang xong
   document.addEventListener('DOMContentLoaded', () => {
     const heroContent = document.getElementById('hero-content');
     if (heroContent) {
-      setTimeout(() => {
-        heroContent.classList.remove('opacity-0', 'translate-y-8');
-        heroContent.classList.add('opacity-100', 'translate-y-0');
-      }, 150); // Độ trễ nhẹ để đảm bảo DOM đã render xong
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          heroContent.classList.remove('opacity-0', 'translate-y-8');
+          heroContent.classList.add('opacity-100', 'translate-y-0');
+        }, 100); 
+      });
     }
 
-    // Cấu hình trình theo dõi cuộn trang (Intersection Observer)
     const observerOptions = {
-      root: null, // Lấy toàn bộ khung nhìn trình duyệt
-      rootMargin: '0px 0px -80px 0px', // Kích hoạt sớm 80px trước khi phần tử chạm đáy màn hình
-      threshold: 0.1 // Chỉ cần 10% phần tử xuất hiện là bắt đầu chạy hiệu ứng
+      root: null,
+      rootMargin: '0px 0px -50px 0px', 
+      threshold: 0.05 
     };
 
     const observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Khi phần tử xuất hiện: Trả lại trạng thái hiển thị đầy đủ và vị trí chuẩn
-          entry.target.classList.remove('opacity-0', 'translate-y-10', 'translate-y-16');
+          entry.target.classList.remove('opacity-0', 'translate-y-10', 'translate-y-12');
           entry.target.classList.add('opacity-100', 'translate-y-0');
-          // Huỷ theo dõi phần tử này sau khi đã chạy hiệu ứng một lần (Tránh lặp đi lặp lại khi cuộn lên xuống)
           observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
 
-    // Thu thập tất cả các phần tử có class "reveal" để theo dõi
     const revealElements = document.querySelectorAll('.reveal');
     revealElements.forEach(el => observer.observe(el));
   });

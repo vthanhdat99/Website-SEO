@@ -7,40 +7,62 @@ const title = product?.title?.rendered || 'Sản phẩm đang cập nhật';
 const slug = product?.slug || '#';
 const imageUrl = product?._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
 
-// Lấy giá tiền từ ACF
+// Lấy giá tiền và trạng thái ưu tiên (HOT) từ ACF
 const giaTien = product?.acf?.gia_tien || '';
+const isHot = product?.acf?.uu_tien || false;
 ---
 
-<a href={`/san-pham/${slug}`} class="group flex flex-col h-full bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500">
+<a href={`/san-pham/${slug}`} class="group flex flex-col h-full bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-500">
   
   {/* KHỐI HÌNH ẢNH - Tối ưu để hiển thị rõ toàn bộ */}
   <div class="relative bg-white aspect-square w-full overflow-hidden shrink-0 p-3 flex items-center justify-center border-b border-gray-50">
     {/* Lớp phủ hover mờ */}
     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.02] transition-colors duration-500 z-10"></div>
     
+    {/* ================= NHÃN HOT - GÓC TRÊN BÊN PHẢI ================= */}
+    {isHot && (
+      <div class="absolute top-3 right-3 z-20 flex items-center justify-center">
+        {/* Vòng sáng tỏa ra phía sau tạo hiệu ứng nổi bật (pulse glow) */}
+        <div class="absolute inset-0 bg-[#E63946] rounded-full animate-ping opacity-20"></div>
+        
+        {/* Thẻ HOT chính thức */}
+        <div class="relative bg-[#E63946] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-[0_4px_10px_rgba(230,57,70,0.3)] flex items-center gap-1">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.58 10c-.34-.51-.83-.87-1.42-1.02-1.61-.41-2.42-1.89-2.07-3.41.22-.94-.03-1.92-.68-2.67C12.76 2.15 11.66 2 10.74 2.5c-.88.48-1.42 1.4-1.4 2.41.03 1.55-.91 2.91-2.36 3.42-1.06.38-1.88 1.25-2.18 2.34-.3 1.09-.06 2.24.63 3.09.43.53.72 1.18.84 1.87.16.89-.1 1.8-.71 2.47-.61.67-1.49 1.05-2.4 1.03-.49-.01-.98-.15-1.4-.41-.42-.26-.76-.64-.98-1.08-.22-.44-.31-.94-.25-1.43.06-.49.25-.95.55-1.34L1.31 15c.34-.51.83-.87 1.42-1.02 1.61-.41 2.42-1.89 2.07-3.41-.22-.94.03-1.92.68-2.67.65-.75 1.75-.9 2.67-.4.88.48 1.42 1.4 1.4 2.41-.03 1.55.91 2.91 2.36 3.42 1.06.38 1.88 1.25 2.18 2.34.3 1.09.06 2.24-.63 3.09-.43.53-.72 1.18-.84 1.87-.16.89.1 1.8.71 2.47.61.67 1.49 1.05 2.4 1.03.49-.01.98-.15 1.4-.41.42-.26.76-.64.98-1.08.22-.44.31-.94.25-1.43-.06-.49-.25-.95-.55-1.34L22.69 15z" transform="translate(1 1) scale(0.9)"/>
+            <path fill="white" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.882-14.86c-1.12.564-1.745 1.854-1.503 3.092.17.886.85 1.6 1.737 1.82 1.163.287 1.873 1.458 1.644 2.637-.107.545-.463 1.002-.958 1.232-.494.23-.1.085 2.692-2.188z"/>
+          </svg>
+          HOT
+        </div>
+      </div>
+    )}
+    
     {imageUrl ? (
       <img 
         src={imageUrl} 
         alt={title}
         loading="lazy"
-        // QUAN TRỌNG: object-contain đảm bảo thấy toàn bộ ảnh, không bị cắt
-        class="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-700 ease-out relative z-0"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
       />
     ) : (
       <div class="w-full h-full flex items-center justify-center bg-gray-50">
          <span class="text-gray-300 font-bold text-xl tracking-widest uppercase">REXAM</span>
       </div>
     )}
+
+    {/* Hiển thị Giá tiền */}
+    {giaTien && (
+      <div class="absolute bottom-3 right-3 z-20">
+        <div class="bg-white/95 backdrop-blur-sm text-[#00A88F] px-3 py-1.5 rounded-full shadow-md border border-gray-200 font-bold text-sm">
+          {giaTien}
+        </div>
+      </div>
+    )}
+    
   </div>
   
   {/* KHỐI NỘI DUNG */}
   <div class="p-5 flex flex-col flex-grow bg-white z-20">
     <h3 class="text-base font-medium text-gray-800 mb-1 group-hover:text-[#00A88F] transition-colors line-clamp-2 leading-normal" set:html={title} />
-    
-    {/* Hiển thị Giá tiền */}
-    {giaTien && (
-       <div class="text-[#00A88F] font-bold text-base mt-1 mb-3">{giaTien}</div>
-    )}
     
     {/* Nút Xem chi tiết */}
     <div class="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between">
